@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Finalizar Acesso VIP</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
+    <style>
+        /* --- ESTILOS DARK/HOT --- */
+        :root { --primary: #ff0055; --bg: #050505; --card-bg: rgba(20, 20, 20, 0.90); --text: #ffffff; --gold: #ffd700; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: var(--bg); background-image: url('https://s3.typebot.io/public/workspaces/cmknlilm30004l7040v8r2mn5/typebots/cmknlj5mi000al704afxi7gs0/blocks/x110azg9s1k9c9norqqrk9h5?v=1768974217059'); background-size: cover; background-position: center; background-attachment: fixed; color: var(--text); display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 20px; }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); z-index: -1; }
+        .header-profile { display: flex; flex-direction: column; align-items: center; margin-bottom: 20px; margin-top: 10px; text-align: center; }
+        .avatar-wrapper { position: relative; margin-bottom: 10px; }
+        .avatar { width: 80px; height: 80px; border-radius: 50%; border: 3px solid var(--primary); box-shadow: 0 0 25px var(--primary); object-fit: cover; }
+        .status-badge { position: absolute; bottom: 0; right: 0; background: #00ff88; color: #000; font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 10px; border: 2px solid #000; }
+        h1 { font-size: 20px; text-transform: uppercase; margin-bottom: 5px; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+        p.sub { color: #ccc; font-size: 13px; max-width: 350px; line-height: 1.4; }
+        .urgency-bar { background: linear-gradient(90deg, #ff0055, #ff5e00); width: 100%; max-width: 500px; padding: 8px; border-radius: 5px; font-size: 12px; font-weight: bold; text-align: center; margin-bottom: 20px; box-shadow: 0 0 15px rgba(255, 0, 85, 0.4); animation: pulse-bar 2s infinite; }
+        @keyframes pulse-bar { 0%, 100% { opacity: 1; } 50% { opacity: 0.8; } }
+        .plans-container { width: 100%; max-width: 500px; display: flex; flex-direction: column; gap: 15px; padding-bottom: 80px; }
+        .plan-card { background: var(--card-bg); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; padding: 20px 15px; position: relative; display: flex; flex-direction: column; align-items: center; text-align: center; transition: 0.3s; backdrop-filter: blur(10px); }
+        .plan-card.popular { border: 2px solid var(--primary); background: linear-gradient(145deg, rgba(255,0,85,0.15), rgba(0,0,0,0.95)); box-shadow: 0 0 25px rgba(255, 0, 85, 0.25); transform: scale(1.02); z-index: 2; }
+        .tag-promo { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--primary); color: white; padding: 4px 15px; border-radius: 20px; font-size: 11px; font-weight: 800; text-transform: uppercase; box-shadow: 0 2px 10px rgba(255, 0, 85, 0.5); }
+        .plan-name { font-size: 18px; font-weight: bold; color: #fff; margin-bottom: 5px; }
+        .old-price { font-size: 12px; text-decoration: line-through; color: #666; }
+        .new-price { font-size: 24px; font-weight: 900; color: #fff; margin-bottom: 15px; }
+        .new-price span { font-size: 12px; font-weight: normal; color: #aaa; }
+        .benefits-list { list-style: none; width: 100%; margin-bottom: 20px; text-align: left; padding: 0 10px; border-top: 1px solid #333; padding-top: 15px; }
+        .benefits-list li { font-size: 13px; color: #ddd; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+        .benefits-list li i { color: var(--primary); font-size: 12px; min-width: 15px; }
+        .benefits-list li.blocked { color: #555; text-decoration: line-through; }
+        .benefits-list li.blocked i { color: #444; }
+        .benefits-list li.gold i { color: var(--gold); }
+        .btn-select { width: 100%; padding: 12px; border-radius: 50px; font-size: 14px; font-weight: bold; border: none; text-transform: uppercase; text-align: center; display: block; transition: 0.2s; cursor: pointer; }
+        .btn-basic { background: transparent; border: 1px solid #555; color: #ccc; }
+        .btn-hot { background: var(--primary); color: white; box-shadow: 0 0 15px rgba(255, 0, 85, 0.4); animation: shake 3s infinite; }
+        .btn-gold { background: linear-gradient(45deg, #ffd700, #b8860b); color: black; font-weight: 900; box-shadow: 0 0 15px rgba(255, 215, 0, 0.3); }
+        .btn-select:disabled { opacity: 0.7; cursor: not-allowed; animation: none; }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 10%, 30%, 50%, 70%, 90% { transform: translateX(-1px); } 20%, 40%, 60%, 80% { transform: translateX(1px); } }
+        .footer-secure { font-size: 10px; color: #666; margin-top: 10px; display: flex; align-items: center; gap: 5px; }
+        .pix-modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); z-index: 9999; align-items: center; justify-content: center; padding: 20px; animation: fadeIn 0.3s ease; }
+        .pix-modal-overlay.active { display: flex; }
+        .pix-content { background: #1a1a1a; width: 100%; max-width: 400px; border-radius: 20px; padding: 30px 20px; border: 1px solid #333; text-align: center; box-shadow: 0 0 30px rgba(0,0,0,0.5); position: relative; }
+        .btn-close-modal { position: absolute; top: 15px; right: 15px; background: none; border: none; color: #666; font-size: 24px; cursor: pointer; }
+        .qr-placeholder { background: #fff; padding: 10px; border-radius: 10px; display: inline-block; margin: 20px 0; }
+        .pix-code-box { background: #111; border: 1px solid #333; color: #aaa; padding: 10px; font-family: monospace; font-size: 12px; border-radius: 5px; width: 100%; word-break: break-all; margin-bottom: 15px; user-select: all; }
+        .btn-copy-pix { background: #00ff88; color: #000; font-weight: bold; padding: 12px; width: 100%; border-radius: 50px; border: none; cursor: pointer; font-size: 14px; box-shadow: 0 0 15px rgba(0,255,136,0.3); }
+        .notification-popup { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px); background: rgba(30, 30, 30, 0.95); border-left: 4px solid var(--primary); padding: 12px 20px; border-radius: 8px; display: flex; align-items: center; gap: 10px; box-shadow: 0 5px 20px rgba(0,0,0,0.5); width: 90%; max-width: 400px; opacity: 0; transition: 0.5s; z-index: 998; }
+        .notification-popup.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+        .notif-text { color: #ccc; font-size: 12px; } .notif-text b { color: #fff; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <div class="overlay"></div>
+
+    <div class="header-profile">
+        <div class="avatar-wrapper">
+            <img src="https://s3.typebot.io/public/workspaces/cmknlilm30004l7040v8r2mn5/typebots/cmknlj5mi000al704afxi7gs0/blocks/pppa4x57k3ugpdxcwjw9wi3d?v=1768974385576" alt="Isabella" class="avatar">
+            <div class="status-badge">ONLINE</div>
+        </div>
+        <h1>Isabella Vip 🔥</h1>
+        <p class="sub">"Oi amor! Consegui verificar seu whats. Agora só falta escolher seu plano pra eu liberar tudo..." 😈</p>
+    </div>
+
+    <div class="urgency-bar">
+        ⚠️ RESTAM APENAS 3 VAGAS NO GRUPO
+    </div>
+
+    <div class="plans-container">
+        
+        <div class="plan-card">
+            <div class="plan-name">👀 Só uma espiadinha</div>
+            <div class="old-price">R$ 19,90</div>
+            <div class="new-price">R$ 9,90</div>
+            <ul class="benefits-list">
+                <li><i class="fas fa-check"></i> Acesso por 3 dias</li>
+                <li><i class="fas fa-check"></i> Fotos do Feed (+18 Soft)</li>
+                <li><i class="fas fa-check"></i> Acesso aos Stories (Melhores Amigos)</li>
+                <li><i class="fas fa-check"></i> Cancelamento a qualquer hora</li>
+                <li class="blocked"><i class="fas fa-times"></i> Sem vídeos pesados</li>
+                <li class="blocked"><i class="fas fa-times"></i> Sem áudios</li>
+            </ul>
+            <button onclick="gerarPix(990)" class="btn-select btn-basic">QUERO ESSE</button>
+        </div>
+
+        <div class="plan-card popular">
+            <div class="tag-promo">🔥 O MAIS VENDIDO</div>
+            <div class="plan-name" style="color:var(--primary)">👑 Membro VIP</div>
+            <div class="old-price">R$ 69,90</div>
+            <div class="new-price">R$ 29,90 <span>/mês</span></div>
+            <ul class="benefits-list">
+                <li><i class="fas fa-check"></i> <strong>Acesso Mensal Completo</strong></li>
+                <li><i class="fas fa-check"></i> Todas as Fotos e Vídeos (Hard)</li>
+                <li><i class="fas fa-check"></i> Grupo Secreto Telegram</li>
+                <li><i class="fas fa-check"></i> Lives Exclusivas Semanais</li>
+                <li><i class="fas fa-check"></i> Áudios Picantes & Gemidos</li>
+                <li><i class="fas fa-check"></i> Avaliação do seu "Instrumento"</li>
+                <li><i class="fas fa-check"></i> Sem Tarjas ou Censura</li>
+            </ul>
+            <button onclick="gerarPix(2990)" class="btn-select btn-hot">LIBERAR TUDO AGORA</button>
+        </div>
+
+        <div class="plan-card">
+            <div class="plan-name" style="color:var(--gold)">💎 Elite Premium</div>
+            <div class="old-price">R$ 150,00</div>
+            <div class="new-price" style="color:var(--gold)">R$ 49,90 <span>/único</span></div>
+            <ul class="benefits-list">
+                <li><i class="fas fa-check gold"></i> <strong>Acesso Vitalício</strong> (Paga 1x)</li>
+                <li><i class="fas fa-check gold"></i> Conteúdo Completo Sem Censura</li>
+                <li><i class="fas fa-check gold"></i> <strong>Meu WhatsApp Pessoal</strong></li>
+                <li><i class="fas fa-check gold"></i> 1 Vídeo Dedicado com seu Nome</li>
+                <li><i class="fas fa-check gold"></i> Sorteio de Chamada de Vídeo</li>
+                <li><i class="fas fa-check gold"></i> Experiência "Namoradinha"</li>
+                <li><i class="fas fa-check gold"></i> Prioridade na Resposta</li>
+            </ul>
+            <button onclick="gerarPix(4990)" class="btn-select btn-gold">VIRAR ELITE</button>
+        </div>
+
+    </div>
+
+    <div class="footer-secure">
+        <i class="fas fa-shield-alt"></i> Compra Discreta • Fatura sem nome explícito
+    </div>
+
+    <div class="notification-popup" id="notif">
+        <div style="background: #00ff88; width: 8px; height: 8px; border-radius: 50%;"></div>
+        <div class="notif-text"></div>
+    </div>
+
+    <div class="pix-modal-overlay" id="pixModal">
+        <div class="pix-content">
+            <button class="btn-close-modal" onclick="fecharModal()">&times;</button>
+            <h2 style="color:#00ff88; margin-bottom: 5px;">Aguardando Pagamento...</h2>
+            <p style="color:#ccc; font-size: 13px;">Use o APP do seu banco para pagar.</p>
+            <div class="qr-placeholder" id="qrcode"></div>
+            <p style="color:#666; font-size: 12px; margin-bottom: 5px;">Código Copia e Cola:</p>
+            <textarea id="pixCodeText" class="pix-code-box" rows="3" readonly></textarea>
+            <button class="btn-copy-pix" onclick="copiarPix()">
+                <i class="fas fa-copy"></i> COPIAR CÓDIGO PIX
+            </button>
+            <div style="margin-top: 20px; font-size: 12px; color: #555;">
+                <i class="fas fa-clock"></i> Expira em 10 minutos
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- PROVA SOCIAL ---
+        const names = ["André - SP", "Lucas - MG", "Marcos - RJ", "Felipe - RS", "João - BA", "Gustavo - SC"];
+        const notif = document.getElementById('notif');
+        const notifText = notif.querySelector('.notif-text');
+        function showNotification() {
+            const randomName = names[Math.floor(Math.random() * names.length)];
+            notifText.innerHTML = `<b>${randomName}</b> acabou de assinar o VIP.`;
+            notif.classList.add('show');
+            setTimeout(() => { notif.classList.remove('show'); }, 4000);
+        }
+        setTimeout(showNotification, 2000);
+        setInterval(showNotification, 12000);
+
+        // --- LÓGICA DO PIX (CHAMA API NODE) ---
+        const pixModal = document.getElementById('pixModal');
+        const qrContainer = document.getElementById('qrcode');
+        const pixTextArea = document.getElementById('pixCodeText');
+
+        async function gerarPix(valor) {
+            const btns = document.querySelectorAll('.btn-select');
+            btns.forEach(b => { b.disabled = true; b.innerText = "GERANDO..."; });
+            
+            try {
+                // Chama a API que criamos no arquivo api/pagamento.js
+                const response = await fetch('/api/pagamento', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ amount: valor })
+                });
+
+                const data = await response.json();
+
+                if (data && (data.pix?.pix_qr_code || data.qr_code)) {
+                    // Algumas APIs retornam em 'pix.pix_qr_code' outras em 'qr_code' direto
+                    const codigo = data.pix?.pix_qr_code || data.qr_code || data.emv;
+                    abrirModalPix(codigo);
+                } else {
+                    alert('Erro ao gerar PIX: ' + (data.message || 'Tente novamente.'));
+                }
+
+            } catch (error) {
+                console.error(error);
+                alert('Erro de conexão. Verifique sua internet.');
+            } finally {
+                btns.forEach(b => { b.disabled = false; b.innerText = "QUERO ESSE"; });
+                // Reseta textos originais (simplificado)
+                document.querySelectorAll('.btn-hot').forEach(b => b.innerText = "LIBERAR TUDO AGORA");
+                document.querySelectorAll('.btn-gold').forEach(b => b.innerText = "VIRAR ELITE");
+            }
+        }
+
+        function abrirModalPix(codigoPix) {
+            qrContainer.innerHTML = '';
+            new QRCode(qrContainer, { text: codigoPix, width: 180, height: 180 });
+            pixTextArea.value = codigoPix;
+            pixModal.classList.add('active');
+        }
+
+        function fecharModal() { pixModal.classList.remove('active'); }
+
+        function copiarPix() {
+            const copyText = document.getElementById("pixCodeText");
+            copyText.select();
+            copyText.setSelectionRange(0, 99999); 
+            navigator.clipboard.writeText(copyText.value);
+            const btn = document.querySelector('.btn-copy-pix');
+            const original = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-check"></i> COPIADO!';
+            btn.style.background = '#fff';
+            setTimeout(() => { btn.innerHTML = original; btn.style.background = '#00ff88'; }, 2000);
+        }
+    </script>
+</body>
+</html>
